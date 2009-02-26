@@ -397,7 +397,7 @@ var Namespace = (function() {
 			return _namespace.include(this.valueOf(), callback);
 		}
 		/**
-		 * @see Namespace.unpack()
+		 * @see Namespace.use()
 		 */
 		String.prototype.use = function() {
 			var callback = arguments[0] || false;
