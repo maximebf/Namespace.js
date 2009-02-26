@@ -378,6 +378,7 @@ var Namespace = (function() {
 	
 	/**
 	 * Adds methods to javascript native's object
+	 * Inspired by http://thinkweb2.com/projects/prototype/namespacing-made-easy/
 	 *
 	 * @public
 	 */
