@@ -43,7 +43,7 @@ Namespace.from('com.sandbox.classes').use('com.sandbox.classes.*', function() {
 
 // register a listener for the includeError event
 Namespace.addEventListener('includeError', function(event) {
-	Console.log('an error occured loading ' + event.uri);
+	Console.log('an error occured loading ' + event.identifier);
 });
 // try to include an inexistant file
 Namespace.include('com.sandbox.toto');

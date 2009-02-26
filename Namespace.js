@@ -15,8 +15,6 @@ var Namespace = (function() {
 
 	var _listeners = {};
 	var _includedIdentifiers = [];
-	var _isIE = navigator.userAgent.indexOf('MSIE') != -1;
-	var _isOpera = window.opera ? true : false;
 	
 	/**
 	 * Returns an object in an array unless the object is an array
@@ -33,7 +31,9 @@ var Namespace = (function() {
 	};
 	
 	/**
+	 * Creates an XMLHttpRequest object
 	 *
+	 * @return XMLHttpRequest
 	 */
 	var _createXmlHttpRequest = function() {
 		var xhr;
@@ -66,53 +66,15 @@ var Namespace = (function() {
 	};
 	
 	/**
+	 * Creates a script tag with the specified data as content
 	 *
+	 * @param	String	data	The content of the script
 	 */
 	var _createScript = function(data) {
 		var script = document.createElement('script');
 		script.type = 'text/javascript';
 		script.text = data;
 		document.body.appendChild(script);
-	};
-	
-	/**
-	 *
-	 */
-	var _loadScript = function(uri) {
-		var successCallback = arguments[1] || false;
-		var errorCallback = arguments[2] || false;
-		var async = successCallback != false;
-		var event = { 'uri': uri, 'async': async, 'callback': successCallback };
-		
-		var xhr = _createXmlHttpRequest();
-		xhr.open("GET", uri, async);
-
-		if (async) {
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState == 4) {
-					if (_isHttpRequestSuccessful(xhr.status || 0)) {
-						_createScript(xhr.responseText);
-						successCallback();
-						return;
-					}
-					event.status = xhr.status;
-					_dispatchEvent('includeError', event);
-					errorCallback && errorCallback();
-				}
-			};
-		}
-		
-		xhr.send(null);
-		
-		if (!async) {
-			if (_isHttpRequestSuccessful(xhr.status || 0)) {
-				_createScript(xhr.responseText);
-				return true;
-			}
-			event.status = xhr.status;
-			_dispatchEvent('includeError', event);
-			return false;
-		}
 	};
 	
 	/**
@@ -196,6 +158,54 @@ var Namespace = (function() {
 	};
 	
 	/**
+	 * Loads a remote script atfer mapping the identifier to an uri
+	 *
+	 * @param	String		identifier			The namespace identifier
+	 * @param	Function	successCallback		When set, the file will be loaded asynchronously. Will be called when the file is loaded
+	 * @param	Function	errorCallback		Callback to be called when an error occurs
+	 * @return	Boolean							Success of failure when loading synchronously
+	 */
+	_loadScript = function(identifier) {
+		var successCallback = arguments[1] || false;
+		var errorCallback = arguments[2] || false;
+		var async = successCallback != false;
+		var uri = _namespace.mapIdentifierToUri(identifier);
+		var event = { 'identifier': identifier, 'uri': uri, 'async': async, 'callback': successCallback };
+		
+		var xhr = _createXmlHttpRequest();
+		xhr.open("GET", uri, async);
+
+		if (async) {
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4) {
+					if (_isHttpRequestSuccessful(xhr.status || 0)) {
+						_createScript(xhr.responseText);
+						_dispatchEvent('include', event);
+						successCallback();
+						return;
+					}
+					event.status = xhr.status;
+					_dispatchEvent('includeError', event);
+					errorCallback && errorCallback();
+				}
+			};
+		}
+		
+		xhr.send(null);
+		
+		if (!async) {
+			if (_isHttpRequestSuccessful(xhr.status || 0)) {
+				_createScript(xhr.responseText);
+				_dispatchEvent('include', event);
+				return true;
+			}
+			event.status = xhr.status;
+			_dispatchEvent('includeError', event);
+			return false;
+		}
+	};
+	
+	/**
 	 * Includes a remote javascript file identified by the specified namespace string. The identifier
 	 * must point to a class. Separators in the string will be converted to slashes and the .js extension will be appended.
 	 *
@@ -206,7 +216,6 @@ var Namespace = (function() {
 	_namespace.include = function(identifier) {
 		var successCallback = arguments[1] || false;
 		var errorCallback = arguments[2] || false;
-		var uri = _namespace.mapIdentifierToUri(identifier);
 		
 		// checks if the identifier is not already included
 		if (_includedIdentifiers[identifier]) {
@@ -215,12 +224,12 @@ var Namespace = (function() {
 		}
 		
 		if (successCallback) {
-			_loadScript(uri, function() {
+			_loadScript(identifier, function() {
 				_includedIdentifiers[identifier] = true;
 				successCallback();
 			}, errorCallback);
 		} else {
-			if (_loadScript(uri)) {
+			if (_loadScript(identifier)) {
 				_includedIdentifiers[identifier] = true;
 				return true;
 			}
@@ -232,11 +241,10 @@ var Namespace = (function() {
 	 * Imports properties from the specified namespace to the global space (ie. under window)
 	 *
 	 * The identifier string can contain the * wildcard character as its last segment (eg: com.test.*) 
-	 * which will unpack all properties from the namespace.
+	 * which will import all properties from the namespace.
 	 * 
-	 * If not, the targeted namespace will be unpacked (ie. if com.test is unpacked, the test object 
-	 * will now be global).
-	 * If the targeted object is not found, it will be included using include().
+	 * If not, the targeted namespace will be imported (ie. if com.test is imported, the test object 
+	 * will now be global). If the targeted object is not found, it will be included using include().
 	 *
 	 * @public
 	 * @param	String		identifier 	The namespace string
@@ -279,7 +287,7 @@ var Namespace = (function() {
 									_namespace.unpack(identifiers.slice(i + 1), callback, autoInclude);
 								} else {
 									// no more identifiers to unpack
-									_dispatchEvent('unpack', event);
+									_dispatchEvent('use', event);
 									callback && callback();
 								}
 							});
@@ -295,7 +303,7 @@ var Namespace = (function() {
 		}
 		
 		// all identifiers have been unpacked
-		_dispatchEvent('unpack', event);
+		_dispatchEvent('use', event);
 		callback && callback();
 	};
 	
