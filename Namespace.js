@@ -409,6 +409,13 @@ var Namespace = (function() {
 		String.prototype.from = function() {
 			return _namespace.from(this.valueOf());
 		}
+		/**
+		 * @see Namespace.use()
+		 */
+		Array.prototype.use = function() {
+			var callback = arguments[0] || false;
+			return _namespace.use(this, callback);
+		}
 	};
 
 	return _namespace;
