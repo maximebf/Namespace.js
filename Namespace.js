@@ -362,7 +362,7 @@ var Namespace = (function() {
 		for (var i = 0; i < identifiers.length; i++) {
 			if (!(identifier in _includedIdentifiers)) {
 				_dispatchEvent('provide', { 'identifier': identifier });
-				_includedItentifiers[identifier] = true;
+				_includedIdentifiers[identifier] = true;
 			}
 		}
 	};
