@@ -9,7 +9,7 @@ License:
 	MIT-style license.
 	
 Version:
-	1.0
+	1.1
 */
 var Namespace = (function() {
 
