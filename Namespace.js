@@ -354,12 +354,16 @@ var Namespace = (function() {
 	 *
 	 * Idea and code submitted by Nathan Smith (http://github.com/smith)
 	 *
-	 * @param	String		identifier
+	 * @param	String|Array	identifier
 	 */
 	_namespace.provide = function(identifier) {
-		if (!(identifier in _includedIdentifiers)) {
-			_dispatchEvent('provide', { 'identifier': identifier });
-			_includedItentifiers[identifier] = true;
+		var identifiers = _toArray(identifier);
+		
+		for (var i = 0; i < identifiers.length; i++) {
+			if (!(identifier in _includedIdentifiers)) {
+				_dispatchEvent('provide', { 'identifier': identifier });
+				_includedItentifiers[identifier] = true;
+			}
 		}
 	};
 	
@@ -437,6 +441,12 @@ var Namespace = (function() {
 		Array.prototype.use = function() {
 			var callback = arguments[0] || false;
 			return _namespace.use(this, callback);
+		}
+		/**
+		 * @see Namespace.provide()
+		 */
+		Array.prototype.provide = function() {
+			return _namespace.provide(this);
 		}
 	};
 
