@@ -350,6 +350,20 @@ var Namespace = (function() {
 	};
 	
 	/**
+	 * Registers a namespace so it won't be included
+	 *
+	 * Idea and code submitted by Nathan Smith (http://github.com/smith)
+	 *
+	 * @param	String		identifier
+	 */
+	_namespace.provide = function(identifier) {
+		if (!(identifier in _includedIdentifiers)) {
+			_dispatchEvent('provide', { 'identifier': identifier });
+			_includedItentifiers[identifier] = true;
+		}
+	};
+	
+	/**
 	 * Registers a function to be called when the specified event is dispatched
 	 *
 	 * @param	String		eventName
@@ -409,6 +423,13 @@ var Namespace = (function() {
 		 */
 		String.prototype.from = function() {
 			return _namespace.from(this.valueOf());
+		}
+		/**
+		 * @see Namespace.provide()
+		 * Idea and code submitted by Nathan Smith (http://github.com/smith)
+		 */
+		String.prototype.provide = function() {
+			return _namespace.provide(this.valueOf());
 		}
 		/**
 		 * @see Namespace.use()
