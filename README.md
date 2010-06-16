@@ -12,6 +12,8 @@ Features:
 *   Events
 *   Optionally add methods to native objects
 
+Documentation available at http://wiki.github.com/maximebf/Namespace.js/
+
 ## Examples
 
     Namespace('foo.bar');
