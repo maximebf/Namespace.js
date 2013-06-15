@@ -86,7 +86,7 @@ var Namespace = (function() {
 	var _dispatchEvent = function(eventName, properties) {
 		if (!_listeners[eventName]) return;
 		properties.event = eventName;
-		for (var i = 0; i < _listeners[eventName].length; i++) {
+		for (var i = 0, j = _listeners[eventName].length; i < j; i++) {
 			_listeners[eventName][i](properties);
 		}
 	};
@@ -105,7 +105,7 @@ var Namespace = (function() {
 		
 		if (identifier != '') {
 			var parts = identifier.split(Namespace.separator);
-			for (var i = 0; i < parts.length; i++) {
+			for (var i = 0, j = parts.length; i < j; i++) {
 				if (!ns[parts[i]]) {
 					ns[parts[i]] = {};
 				}
@@ -135,7 +135,7 @@ var Namespace = (function() {
 		
 		var parts = identifier.split(Namespace.separator);
 		var ns = window;
-		for (var i = 0; i < parts.length; i++) {
+		for (var i = 0, j = parts.length; i < j; i++) {
 			if (!ns[parts[i]]) {
 				return false;
 			}
@@ -257,7 +257,7 @@ var Namespace = (function() {
 		var autoInclude 		= arguments.length > 2 ? arguments[2] : Namespace.autoInclude;
 		var event				= { 'identifier': identifier };
 		
-		for (var i = 0; i < identifiers.length; i++) {
+		for (var i = 0, j = identifiers.length; i < j; i++) {
 			identifier = identifiers[i];
 		
 			var parts = identifier.split(Namespace.separator);
@@ -359,7 +359,7 @@ var Namespace = (function() {
 	_namespace.provide = function(identifier) {
 		var identifiers = _toArray(identifier);
 		
-		for (var i = 0; i < identifiers.length; i++) {
+		for (var i = 0, j = identifiers.length; i < j; i++) {
 			if (!(identifier in _includedIdentifiers)) {
 				_dispatchEvent('provide', { 'identifier': identifier });
 				_includedIdentifiers[identifier] = true;
@@ -386,7 +386,7 @@ var Namespace = (function() {
 	 */
 	_namespace.removeEventListener = function(eventName, callback) {
 		if (!_listeners[eventName]) return;
-		for (var i = 0; i < _listeners[eventName].length; i++) {
+		for (var i = 0, j = _listeners[eventName].length; i < j; i++) {
 			if (_listeners[eventName][i] == callback) {
 				delete _listeners[eventName][i];
 				return;
