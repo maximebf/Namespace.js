@@ -13,7 +13,7 @@ Features:
  *  Events
  *  Optionally add methods to native objects
 
-Documentation available at http://wiki.github.com/maximebf/Namespace.js/
+Documentation available at http://maximebf.github.io/Namespace.js/
 
 ## Examples
 
